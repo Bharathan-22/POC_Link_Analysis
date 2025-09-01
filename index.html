@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+        }
+        .plot-container {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .metrics-container {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Bank Transaction Fraud Detection Dashboard</h1>
+
+        <!-- Metrics Section -->
+        <div class="metrics-container mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Model Performance Metrics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-600">Initial Model</h3>
+                    <p><strong>Accuracy:</strong> {{ accuracy | round(2) }}</p>
+                    <h4 class="mt-2 text-md font-medium">Classification Report:</h4>
+                    <table class="table-auto w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1-Score</th>
+                                <th>Support</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for class, metrics in clf_report.items() if class != 'accuracy' %}
+                            <tr>
+                                <td>{{ class }}</td>
+                                <td>{{ metrics.precision | round(2) }}</td>
+                                <td>{{ metrics.recall | round(2) }}</td>
+                                <td>{{ metrics['f1-score'] | round(2) }}</td>
+                                <td>{{ metrics.support }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-600">Tuned Model</h3>
+                    <p><strong>Accuracy:</strong> {{ tuned_accuracy | round(2) }}</p>
+                    <h4 class="mt-2 text-md font-medium">Classification Report:</h4>
+                    <table class="table-auto w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1-Score</th>
+                                <th>Support</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for class, metrics in tuned_clf_report.items() if class != 'accuracy' %}
+                            <tr>
+                                <td>{{ class }}</td>
+                                <td>{{ metrics.precision | round(2) }}</td>
+                                <td>{{ metrics.recall | round(2) }}</td>
+                                <td>{{ metrics['f1-score'] | round(2) }}</td>
+                                <td>{{ metrics.support }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plots Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for plot in plot_files %}
+            <div class="plot-container">
+                <img src="{{ url_for('static', filename=plot) }}" alt="Plot" class="w-full rounded-lg">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
